@@ -6,6 +6,17 @@ const shellEscape = (() => {
 	return (u) => se([u]);
 })();
 const { exec }  = require('child_process');
+const x11 = require('x11');
+
+x11.createClient(function(err, display) {
+	let X = display.client;
+	console.log(display.screen);
+	let gl = display.screen[0].root;
+
+	X.QueryTree(gl, function(err, tree) {
+        console.log(tree); //output all windows tree
+    });
+});
 
 robot.setMouseDelay(0);
 

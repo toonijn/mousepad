@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "robotjs": "^0.4.7",
-    "shell-escape": "^0.2.0"
+    "shell-escape": "^0.2.0",
+    "x11": "^2.3.0",
+    "x11-prop": "^0.4.3"
   }
 }
