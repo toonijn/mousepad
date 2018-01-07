@@ -72,7 +72,7 @@ x11.createClient(function(err, display) {
 						["CARDINAL", "UTF8_STRING", "ATOM"], (e, res) => {
 							if(e)
 								console.log(e);
-							else if(res[2] != 385) {
+							else {
 								let [pid, name, type] = res;
 								windows.push({wid, pid, name, type});
 							}
@@ -92,10 +92,6 @@ x11.createClient(function(err, display) {
 			X.SetInputFocus(+wid);
 		}
 	};
-
-	features.getOpenWindows("", (w) => {
-		console.log(w);
-	});
 
 	let server = net.createServer((socket) => {
 		socket.setNoDelay(true);
