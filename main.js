@@ -85,7 +85,7 @@ x11.createClient(function(err, display) {
 			});
 		},
 		closeWindow: (wid) => {
-			exec("wmctrl -ic " + wid);
+			exec("export DISPLAY=:0.0; wmctrl -ic " + wid);
 		},
 		focusWindow: (wid) => {
 			X.RaiseWindow(+wid);
