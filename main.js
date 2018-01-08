@@ -107,7 +107,6 @@ x11.createClient(function(err, display) {
 							if(e) console.error(e);
 							else {
 								let [pid, name, type] = res;
-								console.log(res);
 								if(name.substr(0,7) == "Netflix") {
 									robot.keyTap("space");
 								} else if(name.indexOf("YouTube") >= 0) {
