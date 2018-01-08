@@ -142,5 +142,5 @@ x11.createClient(function(err, display) {
 		console.error(error);
 	})
 
-	server.listen(3564);
+	server.listen(3563);
 });
