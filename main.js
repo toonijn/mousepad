@@ -96,23 +96,23 @@ x11.createClient(function(err, display) {
 			X.SetInputFocus(+wid);
 		},
 		typeString: (text) => {
-			robot.typeString(test);
+			robot.typeString(text);
 		},
 		play: () => {
-			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW", (e, wid) => {
-				console.log(wid);
+			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW",
+				(e, res) => {
 				if(e) console.error(e);
 				else
-					x11GetWindowInfo(X, wid, (e, res) => {
+					x11GetWindowInfo(X, res[0], (e, res) => {
 						if(e) console.error(e);
 						else {
 							let [pid, name, type] = res;
 							if(name.substr(-7) == "YouTube") {
-								robotjs.keyTap("k");
+								robot.keyTap("k");
 							} else if(name.substr(0,7) == "Netflix") {
-								robotjs.keyTap("space");
+								robot.keyTap("space");
 							} else {
-								robotjs.keyTap("audio_play");
+								robot.keyTap("audio_play");
 							}
 						}
 					});
