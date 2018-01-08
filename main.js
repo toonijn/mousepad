@@ -29,6 +29,11 @@ let x11GetStringProperties = (X, wid, properties, types, cb) => {
 	})(0);
 };
 
+let x11GetWindowInfo = (X, wid, cb) => {
+	x11GetStringProperties(X, wid,
+		["_NET_WM_PID", "_NET_WM_NAME", "_NET_WM_WINDOW_TYPE"], 
+		["CARDINAL", "UTF8_STRING", "ATOM"], cb);
+}
 
 x11.createClient(function(err, display) {
 	let X = display.client;
@@ -62,23 +67,22 @@ x11.createClient(function(err, display) {
 				let windows = [];
 				let respond = () => {
 					cb(JSON.stringify(windows));
-				}
+				};
 
 				let i = 1;
 				data.forEach(wid => {
 					++i;
-					x11GetStringProperties(X, wid,
-						["_NET_WM_PID", "_NET_WM_NAME", "_NET_WM_WINDOW_TYPE"], 
-						["CARDINAL", "UTF8_STRING", "ATOM"], (e, res) => {
-							if(e)
-								console.log(e);
-							else {
-								let [pid, name, type] = res;
+					x11GetWindowInfo(X, wid, (e, res) => {
+						if(e)
+							console.error(e);
+						else {
+							let [pid, name, type] = res;
+							if(["Desktop", "Bureaublad"].indexOf(name) >= 0)
 								windows.push({wid, pid, name, type});
-							}
-							if(--i == 0)
-								respond();
-						});
+						}
+						if(--i == 0)
+							respond();
+					});
 				});
 				if(--i == 0)
 					respond();
@@ -90,6 +94,29 @@ x11.createClient(function(err, display) {
 		focusWindow: (wid) => {
 			X.RaiseWindow(+wid);
 			X.SetInputFocus(+wid);
+		},
+		typeString: (text) => {
+			robot.typeString(test);
+		},
+		play: () => {
+			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW", (e, wid) => {
+				console.log(wid);
+				if(e) console.error(e);
+				else
+					x11GetWindowInfo(X, wid, (e, res) => {
+						if(e) console.error(e);
+						else {
+							let [pid, name, type] = res;
+							if(name.substr(-7) == "YouTube") {
+								robotjs.keyTap("k");
+							} else if(name.substr(0,7) == "Netflix") {
+								robotjs.keyTap("space");
+							} else {
+								robotjs.keyTap("audio_play");
+							}
+						}
+					});
+			});
 		}
 	};
 
@@ -115,5 +142,5 @@ x11.createClient(function(err, display) {
 		console.error(error);
 	})
 
-	server.listen(3563);
+	server.listen(3564);
 });
