@@ -77,7 +77,7 @@ x11.createClient(function(err, display) {
 							console.error(e);
 						else {
 							let [pid, name, type] = res;
-							if(["Desktop", "Bureaublad"].indexOf(name) >= 0)
+							if(["Desktop", "Bureaublad"].indexOf(name) < 0)
 								windows.push({wid, pid, name, type});
 						}
 						if(--i == 0)
@@ -96,27 +96,28 @@ x11.createClient(function(err, display) {
 			X.SetInputFocus(+wid);
 		},
 		typeString: (text) => {
-			robot.typeString(text);
+			robot.typeString(new Buffer(text, 'base64').toString("utf8"));
 		},
 		play: () => {
 			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW",
 				(e, res) => {
-				if(e) console.error(e);
-				else
-					x11GetWindowInfo(X, res[0], (e, res) => {
-						if(e) console.error(e);
-						else {
-							let [pid, name, type] = res;
-							if(name.substr(-7) == "YouTube") {
-								robot.keyTap("k");
-							} else if(name.substr(0,7) == "Netflix") {
-								robot.keyTap("space");
-							} else {
-								robot.keyTap("audio_play");
+					if(e) console.error(e);
+					else
+						x11GetWindowInfo(X, res[0], (e, res) => {
+							if(e) console.error(e);
+							else {
+								let [pid, name, type] = res;
+								console.log(res);
+								if(name.substr(0,7) == "Netflix") {
+									robot.keyTap("space");
+								} else if(name.indexOf("YouTube") >= 0) {
+									robot.keyTap("k");
+								} else {
+									robot.keyTap("audio_play");
+								}
 							}
-						}
-					});
-			});
+						});
+				});
 		}
 	};
 
@@ -129,7 +130,6 @@ x11.createClient(function(err, display) {
 				return;
 			let args = line.split(" ").map(a => a.trim());
 			let feature = features[args[0]];
-			console.log(args);
 			if(feature)
 				feature(args.slice(1), (r) => {
 					socket.write(r);
