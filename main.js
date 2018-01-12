@@ -99,7 +99,7 @@ x11.createClient(function(err, display) {
 			robot.typeString(Buffer.from(base64, 'base64').toString("utf8"));
 		},
 		openAudacious: () => {
-			exec("export DISPLAY=:0.0; audacious;");
+			exec("export DISPLAY=:0.0; audacious -p;");
 		},
 		play: () => {
 			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW",
@@ -109,9 +109,9 @@ x11.createClient(function(err, display) {
 						if(e) console.error(e);
 						else {
 							let [pid, name, type] = res;
-							if(name.substr(0,7) == "Netflix") {
+							if(name && name.substr(0,7) == "Netflix") {
 								robot.keyTap("space");
-							} else if(name.indexOf("YouTube") >= 0) {
+							} else if(name && name.indexOf("YouTube") >= 0) {
 								robot.keyTap("k");
 							} else {
 								robot.keyTap("audio_play");
