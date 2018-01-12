@@ -33,7 +33,7 @@ let x11GetWindowInfo = (X, wid, cb) => {
 	x11GetStringProperties(X, wid,
 		["_NET_WM_PID", "_NET_WM_NAME", "_NET_WM_WINDOW_TYPE"], 
 		["CARDINAL", "UTF8_STRING", "ATOM"], cb);
-}
+};
 
 x11.createClient(function(err, display) {
 	let X = display.client;
@@ -77,7 +77,7 @@ x11.createClient(function(err, display) {
 							console.error(e);
 						else {
 							let [pid, name, type] = res;
-							if(["Desktop", "Bureaublad"].indexOf(name) < 0)
+							if(name != null && ["Desktop", "Bureaublad"].indexOf(name) < 0)
 								windows.push({wid, pid, name, type});
 						}
 						if(--i == 0)
@@ -88,34 +88,36 @@ x11.createClient(function(err, display) {
 					respond();
 			});
 		},
-		closeWindow: (wid) => {
+		closeWindow: ([wid]) => {
 			exec("export DISPLAY=:0.0; wmctrl -ic " + wid);
 		},
-		focusWindow: (wid) => {
+		focusWindow: ([wid]) => {
 			X.RaiseWindow(+wid);
 			X.SetInputFocus(+wid);
 		},
-		typeString: (text) => {
-			robot.typeString(new Buffer(text, 'base64').toString("utf8"));
+		typeString: ([base64]) => {
+			robot.typeString(Buffer.from(base64, 'base64').toString("utf8"));
+		},
+		openAudacious: () => {
+			exec("export DISPLAY=:0.0; audacious;");
 		},
 		play: () => {
 			x11prop.get_property(X, rootWindow, "_NET_ACTIVE_WINDOW", "WINDOW",
 				(e, res) => {
 					if(e) console.error(e);
-					else
-						x11GetWindowInfo(X, res[0], (e, res) => {
-							if(e) console.error(e);
-							else {
-								let [pid, name, type] = res;
-								if(name.substr(0,7) == "Netflix") {
-									robot.keyTap("space");
-								} else if(name.indexOf("YouTube") >= 0) {
-									robot.keyTap("k");
-								} else {
-									robot.keyTap("audio_play");
-								}
+					else x11GetWindowInfo(X, res[0], (e, res) => {
+						if(e) console.error(e);
+						else {
+							let [pid, name, type] = res;
+							if(name.substr(0,7) == "Netflix") {
+								robot.keyTap("space");
+							} else if(name.indexOf("YouTube") >= 0) {
+								robot.keyTap("k");
+							} else {
+								robot.keyTap("audio_play");
 							}
-						});
+						}
+					});
 				});
 		}
 	};
