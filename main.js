@@ -66,7 +66,7 @@ x11.createClient(function(err, display) {
 
 				let windows = [];
 				let respond = () => {
-					cb(JSON.stringify(windows));
+					cb(JSON.stringify(windows)+"\n");
 				};
 
 				let i = 1;
